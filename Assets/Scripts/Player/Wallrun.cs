@@ -2,15 +2,38 @@ using UnityEngine;
 
 public class Wallrun : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public bool nearWall;
+    private Movement movement;
 
-    // Update is called once per frame
-    void Update()
+
+    private void Start()
     {
-        
+        movement = GetComponent<Movement>();
+    }
+    private void Update()
+    {
+        if (nearWall)
+        {
+            movement.gravity =0f;
+        }
+        else
+        {
+            movement.gravity = -9.81f;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        print("AOISJFOAIJsf");
+        if (other.CompareTag("Wall"))
+        {
+            nearWall = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Wall"))
+        {
+            nearWall = false;
+        }
     }
 }
