@@ -6,6 +6,14 @@ public class Wallrun : MonoBehaviour
     public bool nearWall;
     private Movement movement;
     private GameObject currWall;
+    Vector3 wallPos;
+    Vector3 pos;
+    float realRightPos;
+    float realLeftPos;
+    float realPlayerPos;
+    float distanceToRight;
+    float distanceToLeft;
+    float wallX;
 
 
     private void Start()
@@ -17,11 +25,14 @@ public class Wallrun : MonoBehaviour
     {
         if (nearWall)
         {
-            Vector3 pos = transform.position;
-            pos.x = Mathf.Clamp(pos.x, currWall.transform.position.x + 0.5f, currWall.transform.position.x +0.5f);
+            pos = transform.position;
+
+            pos.x = wallX;
+
             transform.position = pos;
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Wall"))
@@ -29,6 +40,14 @@ public class Wallrun : MonoBehaviour
             currWall = other.gameObject;
             movement.gravity = 0f;
             nearWall = true;
+
+            float playerX = transform.position.x;
+            float wallCenter = currWall.transform.position.x;
+
+            if (playerX < wallCenter)
+                wallX = wallCenter - 0.5f;
+            else
+                wallX = wallCenter + 0.5f;
         }
     }
     private void OnTriggerExit(Collider other)
