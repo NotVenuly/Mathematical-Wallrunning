@@ -23,7 +23,7 @@ public class Wallrun : MonoBehaviour
 
     private void Update()
     {
-        if (nearWall)
+        if (nearWall && !movement.grounded && movement.moveSpeed == 63)
         {
             pos = transform.position;
 

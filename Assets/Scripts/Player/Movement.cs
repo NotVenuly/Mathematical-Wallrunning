@@ -34,12 +34,14 @@ public class Movement : MonoBehaviour
     Vector3 horizontalVelocity;
 
     CharacterController controller;
-    bool grounded;
+    public bool grounded;
+    Wallrun wallrun;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         controller.slopeLimit = maxSlopeAngle;
+        wallrun = GetComponent<Wallrun>();
     }
 
     void Update()
@@ -59,13 +61,17 @@ public class Movement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKey(jumpKey) && readyToJump && grounded)
+        if (Input.GetKey(jumpKey) && readyToJump)
         {
-            readyToJump = false;
+            if(grounded || wallrun.nearWall)
+            {
 
-            Jump();
+                readyToJump = false;
 
-            Invoke(nameof(ResetJump), jumpCooldown);
+                Jump();
+
+                Invoke(nameof(ResetJump), jumpCooldown);
+            }
         }
     }
 
