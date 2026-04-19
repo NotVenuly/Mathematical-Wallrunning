@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 public class Movement : MonoBehaviour
 {
@@ -28,10 +29,12 @@ public class Movement : MonoBehaviour
 
     float horizontalInput;
     float verticalInput;
+    [SerializeField] GameObject speedTextObj;
+    TextMeshProUGUI speedText;
 
     Vector3 moveDirection;
     Vector3 velocity;
-    Vector3 horizontalVelocity;
+    public Vector3 horizontalVelocity;
 
     CharacterController controller;
     public bool grounded;
@@ -42,6 +45,8 @@ public class Movement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         controller.slopeLimit = maxSlopeAngle;
         wallrun = GetComponent<Wallrun>();
+        speedText = speedTextObj.GetComponent<TextMeshProUGUI>();
+        
     }
 
     void Update()
@@ -54,6 +59,7 @@ public class Movement : MonoBehaviour
         MyInput();
         MovePlayer();
         ApplyGravity();
+        speedText.text = $"Speed: {Mathf.RoundToInt(horizontalVelocity.magnitude)}";
     }
 
     void MyInput()

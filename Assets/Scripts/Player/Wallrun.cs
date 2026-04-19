@@ -23,10 +23,10 @@ public class Wallrun : MonoBehaviour
 
     private void Update()
     {
-        if (nearWall && !movement.grounded && movement.moveSpeed == 63)
+        if (nearWall && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude)>=7)
         {
+            movement.gravity = 0f;
             pos = transform.position;
-
             pos.x = wallX;
 
             transform.position = pos;
@@ -38,16 +38,16 @@ public class Wallrun : MonoBehaviour
         if (other.CompareTag("Wall"))
         {
             currWall = other.gameObject;
-            movement.gravity = 0f;
+            
             nearWall = true;
 
             float playerX = transform.position.x;
             float wallCenter = currWall.transform.position.x;
 
             if (playerX < wallCenter)
-                wallX = wallCenter - 0.5f;
+                wallX = wallCenter - 0.7f;
             else
-                wallX = wallCenter + 0.5f;
+                wallX = wallCenter + 0.7f;
         }
     }
     private void OnTriggerExit(Collider other)
