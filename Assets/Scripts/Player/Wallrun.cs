@@ -8,6 +8,8 @@ public class Wallrun : MonoBehaviour
     private GameObject currWall;
     Vector3 wallPos;
     Vector3 pos;
+    [SerializeField] GameObject orientation;
+    CameraScript camScript;
     float realRightPos;
     float realLeftPos;
     float realPlayerPos;
@@ -22,18 +24,22 @@ public class Wallrun : MonoBehaviour
     private void Start()
     {
         movement = GetComponent<Movement>();
+        camScript = orientation.GetComponent<CameraScript>();
     }
 
     private void Update()
     {
-        if (nearWall && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude)>=9)
+        if (nearWall && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude)>=6)
         {
             movement.gravity = 0f;
             pos = transform.position;
             pos.x = wallX;
-            pos.y = 0.43f*CalculateWallRun(currWall.GetComponent<BoxCollider>().size.z-1, movement.horizontalVelocity.magnitude, (pos.z-pos.z));
+            pos.y = CalculateWallRun(currWall.GetComponent<BoxCollider>().bounds.size.z, movement.horizontalVelocity.magnitude, (pos.z-pos.z));
 
             transform.position = pos;
+        }else
+        {
+            movement.gravity = -9.81f;
         }
     }
 
@@ -59,13 +65,14 @@ public class Wallrun : MonoBehaviour
         if (other.CompareTag("Wall"))
         {
             currWall = null;
-            movement.gravity = -9.81f;
             nearWall = false;
         }
     }
 
     private float CalculateWallRun(float distance, float strength, float currSpot)
     {
-        return strength * Mathf.Log(e, -currSpot + distance) + glide;
+        float result = strength * Mathf.Log(e, -currSpot + distance) + glide;
+        print(result);
+        return result;
     }
 }
