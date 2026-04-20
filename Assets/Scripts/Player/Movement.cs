@@ -54,7 +54,10 @@ public class Movement : MonoBehaviour
         grounded = controller.isGrounded;
 
         if (grounded && velocity.y < 0)
+        {
+
             velocity.y = -2f;
+        }
 
         MyInput();
         MovePlayer();
@@ -91,17 +94,9 @@ public class Movement : MonoBehaviour
 
         if (moveDirection.magnitude > 0)
         {
-            horizontalVelocity +=
-                moveDirection.normalized *
-                acceleration *
-                control *
-                Time.deltaTime;
+            horizontalVelocity += moveDirection.normalized * acceleration * control * Time.deltaTime;
         }
-        Vector3 flatVel = new Vector3(
-            horizontalVelocity.x,
-            0,
-            horizontalVelocity.z
-        );
+        Vector3 flatVel = new Vector3 (horizontalVelocity.x, 0, horizontalVelocity.z);
 
         if (flatVel.magnitude > moveSpeed)
         {
@@ -113,33 +108,21 @@ public class Movement : MonoBehaviour
 
         float friction = grounded ? groundFriction : airFriction;
 
-        horizontalVelocity =
-            Vector3.Lerp(
-                horizontalVelocity,
-                Vector3.zero,
-                friction * Time.deltaTime
-            );
+        horizontalVelocity = Vector3.Lerp(horizontalVelocity, Vector3.zero, friction * Time.deltaTime);
 
-        controller.Move(
-            horizontalVelocity * Time.deltaTime
-        );
+        controller.Move(horizontalVelocity * Time.deltaTime);
     }
 
     void ApplyGravity()
     {
         velocity.y += gravity * Time.deltaTime;
 
-        controller.Move(
-            velocity * Time.deltaTime
-        );
+        controller.Move(velocity * Time.deltaTime);
     }
 
     void Jump()
     {
-        velocity.y =
-            Mathf.Sqrt(
-                jumpForce * -2f * gravity
-            );
+        velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
     }
 
     void ResetJump()

@@ -14,6 +14,9 @@ public class Wallrun : MonoBehaviour
     float distanceToRight;
     float distanceToLeft;
     float wallX;
+    float e = 2.719f;
+    float glide = 2.8f;
+    float ratio = 1f;
 
 
     private void Start()
@@ -23,11 +26,12 @@ public class Wallrun : MonoBehaviour
 
     private void Update()
     {
-        if (nearWall && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude)>=7)
+        if (nearWall && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude)>=9)
         {
             movement.gravity = 0f;
             pos = transform.position;
             pos.x = wallX;
+            pos.y = 0.43f*CalculateWallRun(currWall.GetComponent<BoxCollider>().size.z-1, movement.horizontalVelocity.magnitude, (pos.z-pos.z));
 
             transform.position = pos;
         }
@@ -58,5 +62,10 @@ public class Wallrun : MonoBehaviour
             movement.gravity = -9.81f;
             nearWall = false;
         }
+    }
+
+    private float CalculateWallRun(float distance, float strength, float currSpot)
+    {
+        return strength * Mathf.Log(e, -currSpot + distance) + glide;
     }
 }
