@@ -4,6 +4,7 @@ using UnityEngine;
 public class Wallrun : MonoBehaviour
 {
     public bool nearWall;
+    public bool wallRun;
     private Movement movement;
     private GameObject currWall;
     Vector3 wallPos;
@@ -29,7 +30,7 @@ public class Wallrun : MonoBehaviour
 
     private void Update()
     {
-        if (nearWall && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude)>=6)
+        if (wallRun)
         {
             movement.gravity = 0f;
             pos = transform.position;
@@ -45,11 +46,11 @@ public class Wallrun : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Wall"))
+        if (other.CompareTag("Wall") && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude) >= 6)
         {
             currWall = other.gameObject;
-            
-            nearWall = true;
+
+            wallRun = true;
 
             float playerX = transform.position.x;
             float wallCenter = currWall.transform.position.x;
