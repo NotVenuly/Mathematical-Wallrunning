@@ -18,7 +18,6 @@ public class Wallrun : MonoBehaviour
     float distanceToLeft;
     float wallX;
     float e = 2.719f;
-    float glide = 2.8f;
     float ratio = 1f;
 
 
@@ -32,12 +31,7 @@ public class Wallrun : MonoBehaviour
     {
         if (wallRun)
         {
-            movement.gravity = 0f;
-            pos = transform.position;
-            pos.x = wallX;
-            pos.y = CalculateWallRun(currWall.GetComponent<BoxCollider>().bounds.size.z, movement.horizontalVelocity.magnitude, (pos.z-pos.z));
-
-            transform.position = pos;
+            transform.position = WallRun();
         }else
         {
             movement.gravity = -9.81f;
@@ -46,21 +40,29 @@ public class Wallrun : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Wall") && !movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude) >= 6)
-        {
+        if(other.CompareTag("Wall")){
+            nearWall = true;
             currWall = other.gameObject;
-
-            wallRun = true;
-
-            float playerX = transform.position.x;
-            float wallCenter = currWall.transform.position.x;
-
-            if (playerX < wallCenter)
-                wallX = wallCenter - 0.7f;
-            else
-                wallX = wallCenter + 0.7f;
+            if (!movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude) >= 6)
+            {
+                WallRunPreset();
+            }
         }
     }
+
+    public void WallRunPreset()
+    {
+        wallRun = true;
+
+        float playerX = transform.position.x;
+        float wallCenter = currWall.transform.position.x;
+
+        if (playerX < wallCenter)
+            wallX = wallCenter - 0.7f;
+        else
+            wallX = wallCenter + 0.7f;
+    }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Wall"))
@@ -69,10 +71,18 @@ public class Wallrun : MonoBehaviour
             nearWall = false;
         }
     }
-
-    private float CalculateWallRun(float distance, float strength, float currSpot)
+    private Vector3 WallRun()
     {
-        float result = strength * Mathf.Log(e, -currSpot + distance) + glide;
+        movement.gravity = 0f;
+        pos = transform.position;
+        pos.x = wallX;
+        pos.y = CalculateWallRun(currWall.GetComponent<BoxCollider>().bounds.size.z, movement.horizontalVelocity.magnitude, (pos.z - pos.z), 0f);
+        return pos;
+    }
+
+    private float CalculateWallRun(float distance, float strength, float currSpot, float angle)
+    {
+        float result = strength * Mathf.Log(e, -currSpot + distance) + angle;
         print(result);
         return result;
     }

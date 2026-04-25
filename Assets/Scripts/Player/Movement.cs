@@ -123,6 +123,10 @@ public class Movement : MonoBehaviour
     void Jump()
     {
         velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
+        if (!grounded && Mathf.RoundToInt(horizontalVelocity.magnitude) >= 6 && wallrun.nearWall)
+        {
+            wallrun.WallRunPreset();
+        }
     }
 
     void ResetJump()
