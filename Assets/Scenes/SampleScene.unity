@@ -1278,7 +1278,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Wallrun
   nearWall: 0
   wallRun: 0
-  orientation: {fileID: 0}
+  orientation: {fileID: 1490118962}
+  wall: {fileID: 2043548146}
 --- !u!136 &1282752970
 CapsuleCollider:
   m_ObjectHideFlags: 0

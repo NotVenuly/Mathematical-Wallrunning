@@ -7,28 +7,29 @@ public class Wallrun : MonoBehaviour
     public bool wallRun;
     private Movement movement;
     private GameObject currWall;
-    Vector3 wallPos;
     Vector3 pos;
     [SerializeField] GameObject orientation;
-    CameraScript camScript;
-    float realRightPos;
-    float realLeftPos;
-    float realPlayerPos;
-    float distanceToRight;
-    float distanceToLeft;
+    [SerializeField] GameObject wall;
     float wallX;
     float e = 2.719f;
-    float ratio = 1f;
+    float currentSpot;
 
 
     private void Start()
     {
         movement = GetComponent<Movement>();
-        camScript = orientation.GetComponent<CameraScript>();
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            print("wall orientation: " + wall.transform.eulerAngles);
+            print("wall size: " + wall.GetComponent<BoxCollider>().bounds.size.z);
+            print("wall height: " + wall.GetComponent<BoxCollider>().bounds.size.y);
+            print("player orientation: " + orientation.transform.eulerAngles);
+            print("angle: " + AngleCheck());
+        }
         if (wallRun)
         {
             transform.position = WallRun();
@@ -43,11 +44,35 @@ public class Wallrun : MonoBehaviour
         if(other.CompareTag("Wall")){
             nearWall = true;
             currWall = other.gameObject;
-            if (!movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude) >= 6)
+            if (WallRunCheck())
             {
+
                 WallRunPreset();
             }
         }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Wall"))
+        {
+            currWall = null;
+            nearWall = false;
+            movement.gravity = -9.81f;
+        }
+    }
+
+    private float AngleCheck()
+    {
+        return Mathf.Abs(Mathf.Min(orientation.transform.eulerAngles.y, 180 - orientation.transform.eulerAngles.y));
+    }
+
+    public bool WallRunCheck()
+    {
+        if (!movement.grounded && Mathf.RoundToInt(movement.horizontalVelocity.magnitude) >= 6)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void WallRunPreset()
@@ -61,29 +86,23 @@ public class Wallrun : MonoBehaviour
             wallX = wallCenter - 0.7f;
         else
             wallX = wallCenter + 0.7f;
+        currentSpot = 0f;
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Wall"))
-        {
-            currWall = null;
-            nearWall = false;
-        }
-    }
     private Vector3 WallRun()
     {
         movement.gravity = 0f;
+        currentSpot += movement.horizontalVelocity.z * Time.deltaTime;
         pos = transform.position;
         pos.x = wallX;
-        pos.y = CalculateWallRun(currWall.GetComponent<BoxCollider>().bounds.size.z, movement.horizontalVelocity.magnitude, (pos.z - pos.z), 0f);
+        pos.y = CalculateWallRun(movement.horizontalVelocity.magnitude, currentSpot, currWall.GetComponent<BoxCollider>().bounds.size.z, -20f);
         return pos;
     }
 
-    private float CalculateWallRun(float distance, float strength, float currSpot, float angle)
+    private float CalculateWallRun(float strength, float currSpot, float distance, float angle)
     {
-        float result = strength * Mathf.Log(e, -currSpot + distance) + angle;
-        print(result);
+        float result = strength * Mathf.Log(distance - currSpot) + angle;
+        print("formatted2: " + strength + " * ln(-" + currSpot + " + " + distance + ")" + " + " + angle + " = " + result);
         return result;
     }
 }
