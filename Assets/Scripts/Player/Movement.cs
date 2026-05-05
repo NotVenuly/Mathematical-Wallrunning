@@ -51,7 +51,7 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        grounded = controller.isGrounded;
+        grounded = controller.isGrounded || Physics.Raycast(transform.position, Vector3.down, 1.1f);
 
         if (grounded && velocity.y < 0)
         {
